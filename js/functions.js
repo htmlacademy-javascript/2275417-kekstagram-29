@@ -5,6 +5,8 @@ function compareStringLength(input, length) {
   return inputString.length <= length;
 }
 
+compareStringLength('sss', 3);
+
 // Функция, проверяющая является ли строка палиндромом.
 
 function isPalindrome(input) {
@@ -15,6 +17,8 @@ function isPalindrome(input) {
   }
   return stringBackwards === string;
 }
+
+isPalindrome('sdds');
 
 // Функция, извлекающая цифры от 0 до 9, возвращая в виде целого положительного числа.
 
@@ -28,3 +32,5 @@ function extractNumbers(input) {
   }
   return parseInt(output, 10);
 }
+
+extractNumbers('dx0451');
