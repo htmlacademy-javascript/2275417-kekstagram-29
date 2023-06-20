@@ -1,27 +1,4 @@
-function getRandomInteger(a, b) {
-  return Math.floor(Math.random() * (b - a + 1) + a);
-}
-
-function getNewId(max) {
-  let lastGeneratedId = 0;
-  return function () {
-    lastGeneratedId += 1;
-    if (lastGeneratedId > max) {
-      return null;
-    }
-    return lastGeneratedId;
-  };
-}
-
-function createArray(arrayLength, inputFunction) {
-  const newArray = [];
-  while (newArray.length < arrayLength) {
-    newArray.push(inputFunction());
-  }
-  return newArray;
-}
-
-const names = [
+const Names = [
   'Fuyuki Tenge',
   'Jill',
   'Shiren',
@@ -56,7 +33,7 @@ const names = [
   'Kiyoura Natsumi'
 ];
 
-const commentMessages = [
+const CommentMessages = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -64,6 +41,21 @@ const commentMessages = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
+
+function getRandomInteger(a, b) {
+  return Math.floor(Math.random() * (b - a + 1) + a);
+}
+
+function getNewId(max) {
+  let lastGeneratedId = 0;
+  return function () {
+    lastGeneratedId += 1;
+    if (lastGeneratedId > max) {
+      return null;
+    }
+    return lastGeneratedId;
+  };
+}
 
 const generatePhotoId = getNewId();
 const generateUrl = getNewId();
@@ -73,15 +65,15 @@ const createMessage = (linesAmount) => {
   let newMessage = '';
   const previousLines = [];
   if (linesAmount === 1) {
-    newMessage += commentMessages[getRandomInteger(0, commentMessages.length - 1)];
+    newMessage += CommentMessages[getRandomInteger(0, CommentMessages.length - 1)];
   } else {
     for (let i = 1; i <= linesAmount; i++) {
-      let newLine = commentMessages[getRandomInteger(0, commentMessages.length - 1)];
-      if (previousLines.length >= commentMessages.length - 1) {
+      let newLine = CommentMessages[getRandomInteger(0, CommentMessages.length - 1)];
+      if (previousLines.length >= CommentMessages.length - 1) {
         return null;
       }
       while (previousLines.includes(newLine)) {
-        newLine = commentMessages[getRandomInteger(0, commentMessages.length - 1)];
+        newLine = CommentMessages[getRandomInteger(0, CommentMessages.length - 1)];
       }
       previousLines.push(newLine);
       newMessage += newLine;
@@ -97,7 +89,7 @@ const createComment = () => ({
   id: generateCommentId(),
   avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
   message: createMessage(getRandomInteger(1, 2)),
-  name: names[getRandomInteger(0, names.length - 1)],
+  name: Names[getRandomInteger(0, Names.length - 1)],
 });
 
 const createUserPhoto = () => ({
@@ -105,7 +97,7 @@ const createUserPhoto = () => ({
   url: `photos/${generateUrl()}.jpg`,
   likes: getRandomInteger(15, 200),
   description: 'description placeholder',
-  comments: createArray(getRandomInteger(0, 30), createComment),
+  comments: Array.from({length: getRandomInteger(0, 30)}, createComment),
 });
 
-createArray(25, createUserPhoto);
+Array.from({ length: 25 }, createUserPhoto);
