@@ -34,3 +34,21 @@ function extractNumbers(input) {
 }
 
 extractNumbers('dx0451');
+
+function parseTime(timeInHours) {
+  const [hour, minute] = timeInHours.split(':');
+  return hour * 60 + Number(minute);
+}
+
+function setMeeting(dayStart, dayEnd, meetingStart, meetingDuration) {
+  const dayStartMinutes = parseTime(dayStart);
+  const dayEndMinutes = parseTime(dayEnd);
+  const meetingStartMinutes = parseTime(meetingStart);
+
+  return (
+    meetingStartMinutes >= dayStartMinutes &&
+    meetingStartMinutes + meetingDuration <= dayEndMinutes
+  );
+}
+
+setMeeting('8:00', '18:00', '14:00', 120);
