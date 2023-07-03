@@ -1,2 +1,3 @@
 import './data.js';
-import './createPictures.js';
+import './pictureList.js';
+import './pictureFullSize.js';
