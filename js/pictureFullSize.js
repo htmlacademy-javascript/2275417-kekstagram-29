@@ -4,7 +4,6 @@ const bigPictureCommentsCount = bigPicture.querySelector('.social__comment-count
 const bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
 const pictureCaption = bigPicture.querySelector('.social__caption');
 const likesCount = bigPicture.querySelector('.likes-count');
-const closeButton = bigPicture.querySelector('.big-picture__cancel');
 const pictureCommentsList = bigPicture.querySelector('.social__comments');
 const commentsCount = bigPicture.querySelector('.comments-count');
 
@@ -59,13 +58,19 @@ function showMore() {
   hideShowMoreButton();
 }
 
+function onOverlayClick(evt) {
+  if (!evt.target.closest('.big-picture__preview') || evt.target.closest('.big-picture__cancel')) {
+    closePhoto();
+  }
+}
+
 function openPhoto(picture, item) {
   picture.addEventListener('click', () => {
     pictureCommentsList.innerHTML = '';
     document.body.classList.add('modal-open');
     bigPicture.classList.remove('hidden');
     document.addEventListener('keydown', onPictureEsc);
-    closeButton.addEventListener('click', closePhoto);
+    bigPicture.addEventListener('click', onOverlayClick);
     bigPictureImage.src = item.url;
     likesCount.textContent = item.likes;
     commentsCount.textContent = item.comments.length;
@@ -81,8 +86,8 @@ function closePhoto() {
   document.body.classList.remove('modal-open');
   bigPicture.classList.add('hidden');
   document.removeEventListener('keydown', onPictureEsc);
-  closeButton.removeEventListener('click', closePhoto);
   bigPictureCommentsLoader.removeEventListener('click', showMore);
+  bigPicture.removeEventListener('click', onOverlayClick);
 }
 
 export { openPhoto };
