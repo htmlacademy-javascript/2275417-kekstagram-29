@@ -3,10 +3,10 @@ import { createPhotos } from './data.js';
 const pictureList = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture').content;
 
-const Photos = createPhotos();
+const photos = createPhotos();
 const pictureListFragment = document.createDocumentFragment();
 
-Photos.forEach((item) => {
+photos.forEach((item) => {
   const newPicture = pictureTemplate.cloneNode(true);
   const img = newPicture.querySelector('.picture__img');
   const likes = newPicture.querySelector('.picture__likes');
@@ -20,3 +20,5 @@ Photos.forEach((item) => {
 });
 
 pictureList.appendChild(pictureListFragment);
+
+export { photos };
