@@ -16,19 +16,19 @@ const options = {
 
 let commentsShown = 0;
 
-function closePhoto() {
+const closePhoto = () => {
   document.body.classList.remove('modal-open');
   bigPicture.classList.add('hidden');
-}
+};
 
-function onPictureEsc(evt) {
+const onPictureEsc = (evt) => {
   if (evt.key === 'Escape') {
     evt.preventDefault();
     closePhoto();
   }
-}
+};
 
-function fillComments(item) {
+const fillComments = (item) => {
   item.comments.forEach((comment) => {
     const element = document.createElement('li');
     const img = document.createElement('img');
@@ -43,40 +43,40 @@ function fillComments(item) {
     element.appendChild(text);
     pictureCommentsList.appendChild(element);
   });
-}
+};
 
-function hideShowMoreButton() {
+const hideShowMoreButton = () => {
   if (pictureCommentsList.children.length === commentsShown.length) {
     bigPictureCommentsLoader.classList.add('hidden');
   } else {
     bigPictureCommentsLoader.classList.remove('hidden');
   }
-}
+};
 
-function hideComments() {
+const hideComments = () => {
   for (let i = 5; i < pictureCommentsList.children.length; i++) {
     pictureCommentsList.children[i].classList.add('hidden');
   }
   commentsShown = bigPicture.querySelectorAll('.social__comment:not(.hidden)');
   hideShowMoreButton();
-}
+};
 
-function showMore() {
+const showMore = () => {
   for (let i = commentsShown.length; i < (commentsShown.length + 5) && i < pictureCommentsList.children.length; i++) {
     pictureCommentsList.children[i].classList.remove('hidden');
   }
   commentsShown = bigPicture.querySelectorAll('.social__comment:not(.hidden)');
   bigPictureCommentsCount.textContent = `${commentsShown.length} из ${pictureCommentsList.children.length} комментариев`;
   hideShowMoreButton();
-}
+};
 
-function onOverlayClick(evt) {
+const onOverlayClick = (evt) => {
   if (!evt.target.closest('.big-picture__preview') || evt.target.closest('.big-picture__cancel')) {
     closePhoto();
   }
-}
+};
 
-function openPhoto(item) {
+const openPhoto = (item) => {
   pictureCommentsList.innerHTML = '';
   document.body.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
@@ -87,9 +87,9 @@ function openPhoto(item) {
   fillComments(item);
   hideComments();
   bigPictureCommentsCount.textContent = `${commentsShown.length} из ${pictureCommentsList.children.length} комментариев`;
-}
+};
 
-function onPictureClick(evt) {
+const onPictureClick = (evt) => {
   const target = evt.target.closest('.picture');
   const id = Number(target.dataset.id);
   photos.forEach((element, index) => {
@@ -97,9 +97,9 @@ function onPictureClick(evt) {
       openPhoto(photos[index]);
     }
   });
-}
+};
 
-function changesEvents() {
+const changesEvents = () => {
   if (bigPicture.classList.contains('hidden')) {
     pictureList.addEventListener('click', onPictureClick);
     document.removeEventListener('keydown', onPictureEsc);
@@ -111,15 +111,15 @@ function changesEvents() {
     bigPictureCommentsLoader.addEventListener('click', showMore);
     pictureList.removeEventListener('click', onPictureClick);
   }
-}
+};
 
-function observeClassChange(mutationList) {
+const observeClassChange = (mutationList) => {
   mutationList.forEach((mutation) => {
     if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
       changesEvents();
     }
   });
-}
+};
 
 const observer = new MutationObserver(observeClassChange);
 observer.observe(bigPicture, options);
