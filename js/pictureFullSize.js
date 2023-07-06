@@ -10,7 +10,16 @@ const likesCount = bigPicture.querySelector('.likes-count');
 const pictureCommentsList = bigPicture.querySelector('.social__comments');
 const commentsCount = bigPicture.querySelector('.comments-count');
 
+const options = {
+  attributes: true
+};
+
 let commentsShown = 0;
+
+function closePhoto() {
+  document.body.classList.remove('modal-open');
+  bigPicture.classList.add('hidden');
+}
 
 function onPictureEsc(evt) {
   if (evt.key === 'Escape') {
@@ -71,8 +80,6 @@ function openPhoto(item) {
   pictureCommentsList.innerHTML = '';
   document.body.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
-  document.addEventListener('keydown', onPictureEsc);
-  bigPicture.addEventListener('click', onOverlayClick);
   bigPictureImage.src = item.url;
   likesCount.textContent = item.likes;
   commentsCount.textContent = item.comments.length;
@@ -80,8 +87,6 @@ function openPhoto(item) {
   fillComments(item);
   hideComments();
   bigPictureCommentsCount.textContent = `${commentsShown.length} из ${pictureCommentsList.children.length} комментариев`;
-  bigPictureCommentsLoader.addEventListener('click', showMore);
-  pictureList.removeEventListener('click', onPictureClick);
 }
 
 function onPictureClick(evt) {
@@ -94,13 +99,29 @@ function onPictureClick(evt) {
   });
 }
 
-function closePhoto() {
-  document.body.classList.remove('modal-open');
-  bigPicture.classList.add('hidden');
-  document.removeEventListener('keydown', onPictureEsc);
-  bigPictureCommentsLoader.removeEventListener('click', showMore);
-  bigPicture.removeEventListener('click', onOverlayClick);
-  pictureList.addEventListener('click', onPictureClick);
+function changesEvents() {
+  if (bigPicture.classList.contains('hidden')) {
+    pictureList.addEventListener('click', onPictureClick);
+    document.removeEventListener('keydown', onPictureEsc);
+    bigPictureCommentsLoader.removeEventListener('click', showMore);
+    bigPicture.removeEventListener('click', onOverlayClick);
+  } else {
+    document.addEventListener('keydown', onPictureEsc);
+    bigPicture.addEventListener('click', onOverlayClick);
+    bigPictureCommentsLoader.addEventListener('click', showMore);
+    pictureList.removeEventListener('click', onPictureClick);
+  }
 }
+
+function observeClassChange(mutationList) {
+  mutationList.forEach((mutation) => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      changesEvents();
+    }
+  });
+}
+
+const observer = new MutationObserver(observeClassChange);
+observer.observe(bigPicture, options);
 
 export { onPictureClick };
