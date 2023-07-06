@@ -1,3 +1,6 @@
+import { photos } from './pictureList.js';
+
+const pictureList = document.querySelector('.pictures');
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImage = bigPicture.querySelector('.big-picture__img img');
 const bigPictureCommentsCount = bigPicture.querySelector('.social__comment-count');
@@ -64,21 +67,30 @@ function onOverlayClick(evt) {
   }
 }
 
-function openPhoto(picture, item) {
-  picture.addEventListener('click', () => {
-    pictureCommentsList.innerHTML = '';
-    document.body.classList.add('modal-open');
-    bigPicture.classList.remove('hidden');
-    document.addEventListener('keydown', onPictureEsc);
-    bigPicture.addEventListener('click', onOverlayClick);
-    bigPictureImage.src = item.url;
-    likesCount.textContent = item.likes;
-    commentsCount.textContent = item.comments.length;
-    pictureCaption.textContent = item.description;
-    fillComments(item);
-    hideComments();
-    bigPictureCommentsCount.textContent = `${commentsShown.length} из ${pictureCommentsList.children.length} комментариев`;
-    bigPictureCommentsLoader.addEventListener('click', showMore);
+function openPhoto(item) {
+  pictureCommentsList.innerHTML = '';
+  document.body.classList.add('modal-open');
+  bigPicture.classList.remove('hidden');
+  document.addEventListener('keydown', onPictureEsc);
+  bigPicture.addEventListener('click', onOverlayClick);
+  bigPictureImage.src = item.url;
+  likesCount.textContent = item.likes;
+  commentsCount.textContent = item.comments.length;
+  pictureCaption.textContent = item.description;
+  fillComments(item);
+  hideComments();
+  bigPictureCommentsCount.textContent = `${commentsShown.length} из ${pictureCommentsList.children.length} комментариев`;
+  bigPictureCommentsLoader.addEventListener('click', showMore);
+  pictureList.removeEventListener('click', onPictureClick);
+}
+
+function onPictureClick(evt) {
+  const target = evt.target.closest('.picture');
+  const id = Number(target.dataset.id);
+  photos.forEach((element, index) => {
+    if (id === element.id) {
+      openPhoto(photos[index]);
+    }
   });
 }
 
@@ -88,6 +100,7 @@ function closePhoto() {
   document.removeEventListener('keydown', onPictureEsc);
   bigPictureCommentsLoader.removeEventListener('click', showMore);
   bigPicture.removeEventListener('click', onOverlayClick);
+  pictureList.addEventListener('click', onPictureClick);
 }
 
-export { openPhoto };
+export { onPictureClick };
