@@ -1,6 +1,6 @@
 import { photos } from './pictureList.js';
+import { closeWindow, openWindow } from './utility.js';
 
-const pictureList = document.querySelector('.pictures');
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImage = bigPicture.querySelector('.big-picture__img img');
 const bigPictureCommentsCount = bigPicture.querySelector('.social__comment-count');
@@ -16,15 +16,10 @@ const options = {
 
 let commentsShown = 0;
 
-const closePhoto = () => {
-  document.body.classList.remove('modal-open');
-  bigPicture.classList.add('hidden');
-};
-
 const onPictureEsc = (evt) => {
   if (evt.key === 'Escape') {
     evt.preventDefault();
-    closePhoto();
+    closeWindow(bigPicture);
   }
 };
 
@@ -70,16 +65,9 @@ const showMore = () => {
   hideShowMoreButton();
 };
 
-const onOverlayClick = (evt) => {
-  if (!evt.target.closest('.big-picture__preview') || evt.target.closest('.big-picture__cancel')) {
-    closePhoto();
-  }
-};
-
 const openPhoto = (item) => {
   pictureCommentsList.innerHTML = '';
-  document.body.classList.add('modal-open');
-  bigPicture.classList.remove('hidden');
+  openWindow(bigPicture);
   bigPictureImage.src = item.url;
   likesCount.textContent = item.likes;
   commentsCount.textContent = item.comments.length;
@@ -92,31 +80,38 @@ const openPhoto = (item) => {
 const onPictureClick = (evt) => {
   const target = evt.target.closest('.picture');
   const id = Number(target.dataset.id);
-  photos.forEach((element, index) => {
-    if (id === element.id) {
-      openPhoto(photos[index]);
-    }
-  });
+  if (target) {
+    photos.forEach((element, index) => {
+      if (id === element.id) {
+        openPhoto(photos[index]);
+      }
+    });
+  }
 };
 
-const changesEvents = () => {
+const onOverlayClick = (evt) => {
+  if (!evt.target.closest('.big-picture__preview')
+    || evt.target.closest('.big-picture__cancel')) {
+    closeWindow(bigPicture);
+  }
+};
+
+const changeEvents = () => {
   if (bigPicture.classList.contains('hidden')) {
-    pictureList.addEventListener('click', onPictureClick);
     document.removeEventListener('keydown', onPictureEsc);
-    bigPictureCommentsLoader.removeEventListener('click', showMore);
     bigPicture.removeEventListener('click', onOverlayClick);
+    bigPictureCommentsLoader.removeEventListener('click', showMore);
   } else {
     document.addEventListener('keydown', onPictureEsc);
     bigPicture.addEventListener('click', onOverlayClick);
     bigPictureCommentsLoader.addEventListener('click', showMore);
-    pictureList.removeEventListener('click', onPictureClick);
   }
 };
 
 const observeClassChange = (mutationList) => {
   mutationList.forEach((mutation) => {
     if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-      changesEvents();
+      changeEvents();
     }
   });
 };
