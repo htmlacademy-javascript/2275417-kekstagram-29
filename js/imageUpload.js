@@ -65,6 +65,13 @@ const options = {
 
 textDescripton.setAttribute('maxLength', MAX_TEXT_LENGTH);
 
+const pristine = new Pristine(uploadForm, {
+  classTo: 'img-upload__field-wrapper',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextClass: 'img-upload__error-text',
+  errorTextTag: 'p'
+});
+
 /**
  * функция закрытия окна редактирования загружаемого изображения.
  * обновляет файл загружаемого значения, удаляет noUiSlider.
@@ -73,14 +80,8 @@ const closeUpload = () => {
   closeWindow(uploadOverlay);
   uploadInput.value = '';
   uploadSlider.noUiSlider.destroy();
+  pristine.reset();
 };
-
-const pristine = new Pristine(uploadForm, {
-  classTo: 'img-upload__field-wrapper',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'img-upload__error-text',
-  errorTextTag: 'p'
-});
 
 /**
  * функция, закрывающая окно редактирования загружаемого изображения по нажатию Esc.
@@ -298,7 +299,6 @@ const openUpload = () => {
   scaleValue.value = '100%';
   uploadImage.style.filter = '';
   activeFilter = 'none';
-  pristine.validate();
   sliderContainer.classList.add('hidden');
   effects.querySelector('.effects__radio#effect-none').checked = true;
   noUiSlider.create(uploadSlider, {
