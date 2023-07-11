@@ -1,7 +1,7 @@
 import { openWindow, closeWindow } from './utility.js';
-import { pristine, validatePristine } from './imageValidation.js';
-import { changeScale } from './imageScale.js';
-import { onFilterChange, setSliderUpdates } from './imageFilters.js';
+import { pristine, validatePristine } from './ImageValidation.js';
+import { changeScale } from './Scale.js';
+import { createSlider, onFilterChange, setSliderUpdates } from './Filters.js';
 
 const upload = document.querySelector('.img-upload');
 const uploadImage = upload.querySelector('.img-upload__preview img');
@@ -67,28 +67,11 @@ const openUpload = () => {
   textDescripton.value = '';
   uploadImage.style.transform = '';
   scaleValue.value = '100%';
-  uploadImage.style.filter = '';
   sliderContainer.classList.add('hidden');
   effects.querySelector('.effects__radio#effect-none').checked = true;
-  noUiSlider.create(uploadSlider, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 100,
-    format: {
-      to: function (value) {
-        if (Number.isInteger(value)) {
-          return value.toFixed(0);
-        }
-        return value.toFixed(1);
-      },
-      from: function (value) {
-        return parseFloat(value);
-      }
-    }
-  });
+  createSlider(uploadSlider);
   setSliderUpdates();
+  uploadImage.style.filter = null;
 };
 
 
@@ -125,4 +108,4 @@ const observeClassChange = (mutationList) => {
 const observer = new MutationObserver(observeClassChange);
 observer.observe(uploadOverlay, options);
 
-export { openUpload, upload, uploadForm, textHashtags, textDescripton, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };
+export { openUpload, upload, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };

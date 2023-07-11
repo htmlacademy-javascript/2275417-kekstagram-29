@@ -1,6 +1,6 @@
 import { pictureListFragment } from './pictureList.js';
 import { onPictureClick } from './pictureFullSize.js';
-import { openUpload } from './imageUpload.js';
+import { openUpload } from './Form.js';
 
 const pictureList = document.querySelector('.pictures');
 const uploadInput = document.querySelector('.img-upload__input');

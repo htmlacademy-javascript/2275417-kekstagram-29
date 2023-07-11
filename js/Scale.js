@@ -1,4 +1,4 @@
-import { scaleValue, uploadImage } from './imageUpload.js';
+import { scaleValue, uploadImage } from './Form.js';
 
 /**
  * функция для изменения масштаба загружаемого изображения.
