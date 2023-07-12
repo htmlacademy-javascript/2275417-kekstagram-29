@@ -1,4 +1,3 @@
-
 import { splitArray, checkNoRepeatedElement } from './utility.js';
 
 const upload = document.querySelector('.img-upload');

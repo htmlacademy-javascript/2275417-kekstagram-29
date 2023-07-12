@@ -81,6 +81,7 @@ const openPhoto = (item) => {
 const onPictureClick = (evt) => {
   const target = evt.target.closest('.picture');
   if (target) {
+    evt.preventDefault();
     const id = Number(target.dataset.id);
     photos.forEach((element, index) => {
       if (id === element.id) {

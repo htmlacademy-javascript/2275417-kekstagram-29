@@ -1,7 +1,7 @@
 import { openWindow, closeWindow } from './utility.js';
-import { pristine, validatePristine } from './ImageValidation.js';
-import { changeScale } from './Scale.js';
-import { createSlider, onFilterChange, setSliderUpdates } from './Filters.js';
+import { pristine, validatePristine } from './imageValidation.js';
+import { changeScale } from './scale.js';
+import { createSlider, onFilterChange, setSliderUpdates } from './filters.js';
 
 const upload = document.querySelector('.img-upload');
 const uploadImage = upload.querySelector('.img-upload__preview img');
@@ -29,6 +29,7 @@ const closeUpload = () => {
   closeWindow(uploadOverlay);
   uploadInput.value = '';
   uploadSlider.noUiSlider.destroy();
+  uploadForm.reset();
   pristine.reset();
 };
 
@@ -58,20 +59,23 @@ const onOverlayClick = (evt) => {
 };
 
 /**
+ * функция, сбрасывающая значения дополнительных элементов формы.
+ */
+const onOpenReset = () => {
+  uploadImage.style.transform = '';
+  sliderContainer.classList.add('hidden');
+  uploadImage.style.filter = null;
+};
+
+/**
  * функция для открытия окна редактирования загружаемого значения.
  * обнуляет введенные значения, восстанавливает стандартные значения масштаба и фильтров, добавляет noUiSlider.
  */
 const openUpload = () => {
   openWindow(uploadOverlay);
-  textHashtags.value = '';
-  textDescripton.value = '';
-  uploadImage.style.transform = '';
-  scaleValue.value = '100%';
-  sliderContainer.classList.add('hidden');
-  effects.querySelector('.effects__radio#effect-none').checked = true;
   createSlider(uploadSlider);
   setSliderUpdates();
-  uploadImage.style.filter = null;
+  onOpenReset();
 };
 
 
@@ -85,13 +89,13 @@ const changeEvents = () => {
     uploadScale.removeEventListener('click', changeScale);
     effects.removeEventListener('change', onFilterChange);
     document.removeEventListener('keydown', onUploadEsc);
-  } else {
-    uploadForm.addEventListener('click', onOverlayClick);
-    uploadForm.addEventListener('submit', validatePristine);
-    uploadScale.addEventListener('click', changeScale);
-    effects.addEventListener('change', onFilterChange);
-    document.addEventListener('keydown', onUploadEsc);
+    return;
   }
+  uploadForm.addEventListener('click', onOverlayClick);
+  uploadForm.addEventListener('submit', validatePristine);
+  uploadScale.addEventListener('click', changeScale);
+  effects.addEventListener('change', onFilterChange);
+  document.addEventListener('keydown', onUploadEsc);
 };
 
 /**
@@ -108,4 +112,4 @@ const observeClassChange = (mutationList) => {
 const observer = new MutationObserver(observeClassChange);
 observer.observe(uploadOverlay, options);
 
-export { openUpload, upload, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };
+export { openUpload, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };

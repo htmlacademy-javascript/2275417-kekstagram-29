@@ -1,74 +1,49 @@
-import { sliderContainer, uploadSlider, uploadImage } from './Form.js';
+import { sliderContainer, uploadSlider, uploadImage } from './form.js';
 
-const upload = document.querySelector('.img-upload');
-const effectLevel = upload.querySelector('.effect-level__value');
-
-const Effect = {
-  DEFAULT: 'none',
-  CHROME: 'chrome',
-  SEPIA: 'sepia',
-  MARVIN: 'marvin',
-  PHOBOS: 'phobos',
-  HEAT: 'heat',
-};
-
-const filterStyle = {
-  [Effect.CHROME]: {
+const filterOptions = {
+  ['none']: {
+    min: 0,
+    max: 100,
+    step: 1,
+  },
+  ['chrome']: {
     style: 'grayscale',
     unit: '',
+    min: 0,
+    max: 1,
+    step: 0.1,
   },
-  [Effect.SEPIA]: {
+  ['sepia']: {
     style: 'sepia',
     unit: '',
+    min: 0,
+    max: 1,
+    step: 0.1,
   },
-  [Effect.MARVIN]: {
+  ['marvin']: {
     style: 'invert',
     unit: '%',
+    min: 0,
+    max: 100,
+    step: 1,
   },
-  [Effect.PHOBOS]: {
+  ['phobos']: {
     style: 'blur',
     unit: 'px',
-  },
-  [Effect.HEAT]: {
-    style: 'brightness',
-    unit: '',
-  },
-};
-
-const filterSliderOptions = {
-  [Effect.DEFAULT]: {
-    min: 0,
-    max: 100,
-    step: 1,
-  },
-  [Effect.CHROME]: {
-    min: 0,
-    max: 1,
-    step: 0.1,
-  },
-  [Effect.SEPIA]: {
-    min: 0,
-    max: 1,
-    step: 0.1,
-  },
-  [Effect.MARVIN]: {
-    min: 0,
-    max: 100,
-    step: 1,
-  },
-  [Effect.PHOBOS]: {
     min: 0,
     max: 3,
     step: 0.1,
   },
-  [Effect.HEAT]: {
+  ['heat']: {
+    style: 'brightness',
+    unit: '',
     min: 1,
     max: 3,
     step: 0.1,
   },
 };
 
-let activeFilter = Effect.DEFAULT;
+let activeFilter = 'none';
 
 /**
  * функция, создающая noUiSlider на заданном элементе
@@ -96,21 +71,8 @@ const createSlider = (element) => {
 };
 
 /**
- * функция, меняющая формат стиля изображения в зависмости от значения переменной activeFilter.
- */
-const setImageStyle = () => {
-  if (activeFilter === Effect.DEFAULT) {
-    uploadImage.style.filter = null;
-    return;
-  }
-  const value = effectLevel.value;
-  const { style, unit } = filterStyle[activeFilter];
-  uploadImage.style.filter = `${style}(${value}${unit})`;
-};
-
-/**
  * функция с логикой обновления настроек слайдера.
- * настройки должны браться из словаря filterSliderOptions.
+ * настройки стоит брать из словаря filterOptions.
  */
 const updateSlider = ({ min, max, step }) => {
   uploadSlider.noUiSlider.updateOptions({
@@ -122,29 +84,35 @@ const updateSlider = ({ min, max, step }) => {
 
 /**
  * функция меняющая настройки слайдера в зависимости от выбранного фильтра.
+ * меняет значение переменной activeFilter в соответствии с выбранной радиокнопкой.
  * предназначена для обработчика событий на списке радиокнопок.
  */
 const onFilterChange = (evt) => {
   if (evt.target.value === 'none') {
     sliderContainer.classList.add('hidden');
-    activeFilter = (evt.target.value);
-    updateSlider(filterSliderOptions[activeFilter]);
-  } else {
-    sliderContainer.classList.remove('hidden');
-    activeFilter = (evt.target.value);
-    updateSlider(filterSliderOptions[activeFilter]);
+    activeFilter = evt.target.value;
+    updateSlider(filterOptions[activeFilter]);
+    return;
   }
+  sliderContainer.classList.remove('hidden');
+  activeFilter = evt.target.value;
+  updateSlider(filterOptions[activeFilter]);
 };
 
 /**
  * обработчик изменений слайдера.
  * записывает отформатированные значения слайдера в style.filter загружаемого изображения.
- * формат зависит от выбранной радиокнопки.
+ * формат зависит от значения переменной activeFilter.
  */
 const setSliderUpdates = () => {
   uploadSlider.noUiSlider.on('update', () => {
-    effectLevel.value = uploadSlider.noUiSlider.get();
-    setImageStyle();
+    if (activeFilter === 'none') {
+      uploadImage.style.filter = null;
+      return;
+    }
+    const { style, unit } = filterOptions[activeFilter];
+    const value = uploadSlider.noUiSlider.get();
+    uploadImage.style.filter = `${style}(${value}${unit})`;
   });
 };
 
