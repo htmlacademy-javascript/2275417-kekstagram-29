@@ -1,5 +1,7 @@
 import { sliderContainer, uploadSlider, uploadImage } from './form.js';
 
+const effectLevel = document.querySelector('.effect-level__value');
+
 const filterOptions = {
   'none': {
     min: 0,
@@ -111,6 +113,7 @@ const setSliderUpdates = () => {
       return;
     }
     const { style, unit } = filterOptions[activeFilter];
+    effectLevel.value = uploadSlider.noUiSlider.get();
     const value = uploadSlider.noUiSlider.get();
     uploadImage.style.filter = `${style}(${value}${unit})`;
   });
