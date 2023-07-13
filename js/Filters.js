@@ -1,40 +1,40 @@
 import { sliderContainer, uploadSlider, uploadImage } from './form.js';
 
 const filterOptions = {
-  ['none']: {
+  'none': {
     min: 0,
     max: 100,
     step: 1,
   },
-  ['chrome']: {
+  'chrome': {
     style: 'grayscale',
     unit: '',
     min: 0,
     max: 1,
     step: 0.1,
   },
-  ['sepia']: {
+  'sepia': {
     style: 'sepia',
     unit: '',
     min: 0,
     max: 1,
     step: 0.1,
   },
-  ['marvin']: {
+  'marvin': {
     style: 'invert',
     unit: '%',
     min: 0,
     max: 100,
     step: 1,
   },
-  ['phobos']: {
+  'phobos': {
     style: 'blur',
     unit: 'px',
     min: 0,
     max: 3,
     step: 0.1,
   },
-  ['heat']: {
+  'heat': {
     style: 'brightness',
     unit: '',
     min: 1,
