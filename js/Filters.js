@@ -113,8 +113,8 @@ const setSliderUpdates = () => {
       return;
     }
     const { style, unit } = filterOptions[activeFilter];
-    effectLevel.value = uploadSlider.noUiSlider.get();
     const value = uploadSlider.noUiSlider.get();
+    effectLevel.value = value;
     uploadImage.style.filter = `${style}(${value}${unit})`;
   });
 };
