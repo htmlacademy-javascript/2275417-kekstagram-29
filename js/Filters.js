@@ -1,40 +1,42 @@
 import { sliderContainer, uploadSlider, uploadImage } from './form.js';
 
+const effectLevel = document.querySelector('.effect-level__value');
+
 const filterOptions = {
-  ['none']: {
+  'none': {
     min: 0,
     max: 100,
     step: 1,
   },
-  ['chrome']: {
+  'chrome': {
     style: 'grayscale',
     unit: '',
     min: 0,
     max: 1,
     step: 0.1,
   },
-  ['sepia']: {
+  'sepia': {
     style: 'sepia',
     unit: '',
     min: 0,
     max: 1,
     step: 0.1,
   },
-  ['marvin']: {
+  'marvin': {
     style: 'invert',
     unit: '%',
     min: 0,
     max: 100,
     step: 1,
   },
-  ['phobos']: {
+  'phobos': {
     style: 'blur',
     unit: 'px',
     min: 0,
     max: 3,
     step: 0.1,
   },
-  ['heat']: {
+  'heat': {
     style: 'brightness',
     unit: '',
     min: 1,
@@ -112,6 +114,7 @@ const setSliderUpdates = () => {
     }
     const { style, unit } = filterOptions[activeFilter];
     const value = uploadSlider.noUiSlider.get();
+    effectLevel.value = value;
     uploadImage.style.filter = `${style}(${value}${unit})`;
   });
 };
