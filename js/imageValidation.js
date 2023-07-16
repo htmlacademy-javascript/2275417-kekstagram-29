@@ -74,10 +74,4 @@ const getHashtagsError = () => {
 
 pristine.addValidator(textHashtags, validateHashtags, getHashtagsError);
 
-const validatePristine = (evt) => {
-  if (!pristine.validate()) {
-    evt.preventDefault();
-  }
-};
-
-export { pristine, validatePristine };
+export { pristine };

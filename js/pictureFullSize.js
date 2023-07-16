@@ -1,4 +1,4 @@
-import { photos } from './pictureList.js';
+import { photos } from './data.js';
 import { closeWindow, openWindow } from './utility.js';
 
 const bigPicture = document.querySelector('.big-picture');

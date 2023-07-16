@@ -1,7 +1,8 @@
 import { openWindow, closeWindow } from './utility.js';
-import { pristine, validatePristine } from './imageValidation.js';
+import { pristine } from './imageValidation.js';
 import { changeScale } from './scale.js';
 import { createSlider, onFilterChange, setSliderUpdates } from './filters.js';
+import { sendImageForm } from './data.js';
 
 const upload = document.querySelector('.img-upload');
 const uploadImage = upload.querySelector('.img-upload__preview img');
@@ -78,6 +79,14 @@ const openUpload = () => {
   onOpenReset();
 };
 
+const sendForm = (evt) => {
+  evt.preventDefault();
+  if (pristine.validate()) {
+    const formData = new FormData(evt.target);
+    sendImageForm(formData, closeUpload);
+  }
+};
+
 
 /**
  * функция, меняющая обработчики событий в зависимости от класса hidden окна редактирования загружаемого изображения.
@@ -85,14 +94,14 @@ const openUpload = () => {
 const changeEvents = () => {
   if (uploadOverlay.classList.contains('hidden')) {
     uploadForm.removeEventListener('click', onOverlayClick);
-    uploadForm.removeEventListener('submit', validatePristine);
+    uploadForm.removeEventListener('submit', sendForm);
     uploadScale.removeEventListener('click', changeScale);
     effects.removeEventListener('change', onFilterChange);
     document.removeEventListener('keydown', onUploadEsc);
     return;
   }
   uploadForm.addEventListener('click', onOverlayClick);
-  uploadForm.addEventListener('submit', validatePristine);
+  uploadForm.addEventListener('submit', sendForm);
   uploadScale.addEventListener('click', changeScale);
   effects.addEventListener('change', onFilterChange);
   document.addEventListener('keydown', onUploadEsc);
@@ -112,4 +121,4 @@ const observeClassChange = (mutationList) => {
 const observer = new MutationObserver(observeClassChange);
 observer.observe(uploadOverlay, options);
 
-export { openUpload, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };
+export { openUpload, closeUpload, onUploadEsc, uploadForm, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };

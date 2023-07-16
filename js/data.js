@@ -1,93 +1,118 @@
-import { getRandomInteger, getNewId } from './utility.js';
+import { createElements, pictureListFragment } from './pictureList.js';
+import { uploadForm, onUploadEsc } from './form.js';
 
-const Names = [
-  'Fuyuki Tenge',
-  'Jill',
-  'Shiren',
-  'Aimer',
-  'Sakuzyo',
-  'Kamada Shuhei',
-  'Yui',
-  'Miyashita Yuu',
-  'Annabel',
-  'Yanagi Nagi',
-  'Kihow',
-  'nayuta',
-  'Kajiura Yuki',
-  'Shikata Akiko',
-  'Okabe Keiichi',
-  'Sawano Hiroyuki',
-  'Meguro Shoji',
-  'Sennzai',
-  'Hirose Akane',
-  'Atsumi Saiki',
-  'Tono Kanami',
-  'Yonekura Chihiro',
-  'Imai Asami',
-  'Koeda',
-  'Aoi Eir',
-  'Kirin',
-  'Hazuki',
-  'Kobayashi Mika',
-  'Ishiwatari Daisuke',
-  'Rita',
-  'Minami',
-  'Kiyoura Natsumi'
-];
+const uploadButton = uploadForm.querySelector('.img-upload__submit');
 
-const CommentMessages = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
-];
+const photos = [];
+const pictureList = document.querySelector('.pictures');
+const successTemplate = document.querySelector('#success').content;
+const errorTemplate = document.querySelector('#error').content;
 
-
-const generatePhotoId = getNewId();
-const generateUrl = getNewId();
-const generateCommentId = getNewId();
-
-const createMessage = (linesAmount) => {
-  let newMessage = '';
-  const previousLines = [];
-  if (linesAmount === 1) {
-    newMessage += CommentMessages[getRandomInteger(0, CommentMessages.length - 1)];
-  } else {
-    for (let i = 1; i <= linesAmount; i++) {
-      let newLine = CommentMessages[getRandomInteger(0, CommentMessages.length - 1)];
-      if (previousLines.length >= CommentMessages.length - 1) {
-        return null;
-      }
-      while (previousLines.includes(newLine)) {
-        newLine = CommentMessages[getRandomInteger(0, CommentMessages.length - 1)];
-      }
-      previousLines.push(newLine);
-      newMessage += newLine;
-      if (i !== linesAmount) {
-        newMessage += ' ';
-      }
-    }
+const onSuccessEsc = (evt) => {
+  const successWindow = document.querySelector('.success');
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    successWindow.remove();
+    document.removeEventListener('keydown', onSuccessEsc);
   }
-  return newMessage;
 };
 
-const createComment = () => ({
-  id: generateCommentId(),
-  avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
-  message: createMessage(getRandomInteger(1, 2)),
-  name: Names[getRandomInteger(0, Names.length - 1)],
-});
+const onErrorEsc = (evt) => {
+  const errorWindow = document.querySelector('.error');
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    errorWindow.remove();
+    document.removeEventListener('keydown', onErrorEsc);
+    document.addEventListener('keydown', onUploadEsc);
+  }
+};
 
-const createUserPhoto = () => ({
-  id: generatePhotoId(),
-  url: `photos/${generateUrl()}.jpg`,
-  likes: getRandomInteger(15, 200),
-  description: 'description placeholder',
-  comments: Array.from({ length: getRandomInteger(0, 30) }, createComment),
-});
+const createSuccessWindow = () => {
+  const window = successTemplate.cloneNode(true);
+  document.body.append(window);
+  const successWindow = document.querySelector('.success');
+  document.addEventListener('keydown', onSuccessEsc);
+  successWindow.addEventListener('click', (evt) => {
+    if (evt.target.matches('.success')
+      || evt.target.closest('.success__button')) {
+      successWindow.remove();
+      document.removeEventListener('keydown', onSuccessEsc);
+    }
+  });
+};
 
-const createPhotos = () => Array.from({ length: 25 }, createUserPhoto);
+const createErrorWindow = () => {
+  const window = errorTemplate.cloneNode(true);
+  document.body.append(window);
+  document.removeEventListener('keydown', onUploadEsc);
+  const errorWindow = document.querySelector('.error');
+  document.addEventListener('keydown', onErrorEsc);
+  errorWindow.addEventListener('click', (evt) => {
+    if (evt.target.matches('.error')
+      || evt.target.closest('.error__button')) {
+      errorWindow.remove();
+      document.removeEventListener('keydown', onErrorEsc);
+      document.addEventListener('keydown', onUploadEsc);
+    }
+  });
+};
 
-export { createPhotos };
+const createPhotos = (data) => {
+  for (let i = 0; i < data.length; i++) {
+    photos.push(data[i]);
+  }
+  return photos;
+};
+
+const generateError = (error, element) => {
+  const message = document.createElement('p');
+  message.textContent = error;
+  element.append(message);
+};
+
+const getPictures = () => {
+  fetch('https://29.javascript.pages.academy/kekstagram/data')
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(`При получении данных с сервера произошла ошибка. Код ошибки: ${response.status}`);
+    })
+    .then((data) => {
+      createElements(data);
+      createPhotos(data);
+    })
+    .then(() => {
+      pictureList.appendChild(pictureListFragment);
+    })
+    .catch((err) => {
+      generateError(err, pictureList);
+    });
+};
+
+const sendImageForm = (data, onSuccess) => {
+  uploadButton.disabled = true;
+  fetch('https://29.javascript.pages.academy/kekstagram',
+    {
+      method: 'POST',
+      body: data,
+    },
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
+    })
+    .then(() => {
+      onSuccess();
+      createSuccessWindow();
+    })
+    .catch(() => {
+      createErrorWindow();
+    })
+    .finally(() => {
+      uploadButton.disabled = false;
+    });
+};
+
+export { photos, getPictures, sendImageForm };
