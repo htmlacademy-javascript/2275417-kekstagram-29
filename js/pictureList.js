@@ -1,7 +1,6 @@
 const pictureTemplate = document.querySelector('#picture').content;
-const pictureListFragment = document.createDocumentFragment();
 
-const createElements = (data) => {
+const createElements = (data, element) => {
   for (let i = 0; i < data.length; i++) {
     const newPicture = pictureTemplate.cloneNode(true);
     const picture = newPicture.querySelector('.picture');
@@ -14,8 +13,8 @@ const createElements = (data) => {
     comments.textContent = data[i].comments.length;
     picture.dataset.id = data[i].id;
 
-    pictureListFragment.append(newPicture);
+    element.append(newPicture);
   }
 };
 
-export { pictureListFragment, createElements };
+export { createElements };

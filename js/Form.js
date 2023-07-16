@@ -79,6 +79,9 @@ const openUpload = () => {
   onOpenReset();
 };
 
+/**
+ * функция отправки формы на сервер.
+ */
 const sendForm = (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {

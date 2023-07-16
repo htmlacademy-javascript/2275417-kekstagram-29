@@ -1,13 +1,16 @@
-import { createElements, pictureListFragment } from './pictureList.js';
+import { createElements } from './pictureList.js';
 import { uploadForm, onUploadEsc } from './form.js';
 
 const uploadButton = uploadForm.querySelector('.img-upload__submit');
-
-const photos = [];
-const pictureList = document.querySelector('.pictures');
 const successTemplate = document.querySelector('#success').content;
 const errorTemplate = document.querySelector('#error').content;
 
+const photos = [];
+
+/**
+ * функция, закрывающая окно с сообщением об успешной отправке формы по нажатию Esc.
+ * предназначена для обработчика событий.
+ */
 const onSuccessEsc = (evt) => {
   const successWindow = document.querySelector('.success');
   if (evt.key === 'Escape') {
@@ -17,6 +20,10 @@ const onSuccessEsc = (evt) => {
   }
 };
 
+/**
+ * функция, закрывающая окно с сообщением об ошибке отправки формы по нажатию Esc.
+ * предназначена для обработчика событий.
+ */
 const onErrorEsc = (evt) => {
   const errorWindow = document.querySelector('.error');
   if (evt.key === 'Escape') {
@@ -27,6 +34,20 @@ const onErrorEsc = (evt) => {
   }
 };
 
+/**
+ * функция добавления сообщения об ошибке.
+ * @param {string} error - сообщение об ошибке
+ * @param {HTMLElement} element - DOM элемент, в который нужно добавить сообщение об ошибке.
+ */
+const addError = (error, element) => {
+  const message = document.createElement('p');
+  message.textContent = error;
+  element.append(message);
+};
+
+/**
+ * функция создания окна с сообщением об успешной отправке формы.
+ */
 const createSuccessWindow = () => {
   const window = successTemplate.cloneNode(true);
   document.body.append(window);
@@ -41,8 +62,14 @@ const createSuccessWindow = () => {
   });
 };
 
-const createErrorWindow = () => {
+/**
+ * функция создания окна с сообщением об ошибке отправки формы.
+ * @param {string} errorMessage - сообщение об ошибке.
+ */
+const createErrorWindow = (errorMessage) => {
   const window = errorTemplate.cloneNode(true);
+  const inner = window.querySelector('.error__inner');
+  addError(errorMessage, inner);
   document.body.append(window);
   document.removeEventListener('keydown', onUploadEsc);
   const errorWindow = document.querySelector('.error');
@@ -57,6 +84,11 @@ const createErrorWindow = () => {
   });
 };
 
+/**
+ * функция, переносящая данные фотографий с сервера в массив photos.
+ * @param {Array} data - массив данных.
+ * @returns массив photos.
+ */
 const createPhotos = (data) => {
   for (let i = 0; i < data.length; i++) {
     photos.push(data[i]);
@@ -64,13 +96,11 @@ const createPhotos = (data) => {
   return photos;
 };
 
-const generateError = (error, element) => {
-  const message = document.createElement('p');
-  message.textContent = error;
-  element.append(message);
-};
-
-const getPictures = () => {
+/**
+ * функция отображения фотографий, полученных с сервера.
+ * @param {HTMLElement} element - DOM элемент, в котором нужно отобразить фотографии.
+ */
+const getPictures = (element) => {
   fetch('https://29.javascript.pages.academy/kekstagram/data')
     .then((response) => {
       if (response.ok) {
@@ -79,19 +109,39 @@ const getPictures = () => {
       throw new Error(`При получении данных с сервера произошла ошибка. Код ошибки: ${response.status}`);
     })
     .then((data) => {
-      createElements(data);
+      createElements(data, element);
       createPhotos(data);
     })
-    .then(() => {
-      pictureList.appendChild(pictureListFragment);
-    })
     .catch((err) => {
-      generateError(err, pictureList);
+      addError(err, element);
     });
 };
 
+/**
+ * функция, делающая кнопку отправки формы неактивной.
+ * @param {HTMLElement} button - кнопка, которую нужно заблокировать.
+ */
+const blockSubmitButton = (button) => {
+  button.disabled = true;
+  button.textContent = 'Отправка...';
+};
+
+/**
+ * функция, возвращающая кнопке отправки формы активное состояние.
+ * @param {HTMLElement} button - кнопка, которую нужно разблокировать.
+ */
+const unblockSubmitButton = (button) => {
+  button.disabled = false;
+  button.textContent = 'Опубликовать';
+};
+
+/**
+ * функция отправки данных формы на сервер.
+ * @param {FormData} data - переменная в которой записана FormData отправляемой формы.
+ * @param {function} onSuccess - функция, закрывающая окно формы.
+ */
 const sendImageForm = (data, onSuccess) => {
-  uploadButton.disabled = true;
+  blockSubmitButton(uploadButton);
   fetch('https://29.javascript.pages.academy/kekstagram',
     {
       method: 'POST',
@@ -100,18 +150,18 @@ const sendImageForm = (data, onSuccess) => {
   )
     .then((response) => {
       if (!response.ok) {
-        throw new Error();
+        throw new Error(`При отправке данных на сервер произошла ошибка. Код ошибки: ${response.status}`);
       }
     })
     .then(() => {
       onSuccess();
       createSuccessWindow();
     })
-    .catch(() => {
-      createErrorWindow();
+    .catch((err) => {
+      createErrorWindow(err);
     })
     .finally(() => {
-      uploadButton.disabled = false;
+      unblockSubmitButton(uploadButton);
     });
 };
 

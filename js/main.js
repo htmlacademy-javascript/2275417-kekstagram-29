@@ -5,7 +5,7 @@ import { getPictures } from './data.js';
 const pictureList = document.querySelector('.pictures');
 const uploadInput = document.querySelector('.img-upload__input');
 
-getPictures();
+getPictures(pictureList);
 
 pictureList.addEventListener('click', onPictureClick);
 
