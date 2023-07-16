@@ -37,7 +37,7 @@ const onErrorEsc = (evt) => {
 /**
  * функция добавления сообщения об ошибке.
  * @param {string} error - сообщение об ошибке
- * @param {HTMLElement} element - DOM элемент, в который нужно добавить сообщение об ошибке.
+ * @param {HTMLElement} element - Html элемент, в который нужно добавить сообщение об ошибке.
  */
 const addError = (error, element) => {
   const message = document.createElement('p');
@@ -98,7 +98,7 @@ const createPhotos = (data) => {
 
 /**
  * функция отображения фотографий, полученных с сервера.
- * @param {HTMLElement} element - DOM элемент, в котором нужно отобразить фотографии.
+ * @param {HTMLElement} element - Html элемент, в котором нужно отобразить фотографии.
  */
 const getPictures = (element) => {
   fetch('https://29.javascript.pages.academy/kekstagram/data')
