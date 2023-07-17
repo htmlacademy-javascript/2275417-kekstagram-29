@@ -1,7 +1,6 @@
 import { createElements } from './pictureList.js';
-import { uploadForm, onUploadEsc } from './form.js';
+import { onUploadEsc } from './form.js';
 
-const uploadButton = uploadForm.querySelector('.img-upload__submit');
 const successTemplate = document.querySelector('#success').content;
 const errorTemplate = document.querySelector('#error').content;
 
@@ -139,9 +138,10 @@ const unblockSubmitButton = (button) => {
  * функция отправки данных формы на сервер.
  * @param {FormData} data - переменная в которой записана FormData отправляемой формы.
  * @param {function} onSuccess - функция, закрывающая окно формы.
+ * @param {HTMLElement} button - кнопка отправки формы.
  */
-const sendImageForm = (data, onSuccess) => {
-  blockSubmitButton(uploadButton);
+const sendImageForm = (data, onSuccess, button) => {
+  blockSubmitButton(button);
   fetch('https://29.javascript.pages.academy/kekstagram',
     {
       method: 'POST',
@@ -161,7 +161,7 @@ const sendImageForm = (data, onSuccess) => {
       createErrorWindow(err);
     })
     .finally(() => {
-      unblockSubmitButton(uploadButton);
+      unblockSubmitButton(button);
     });
 };
 

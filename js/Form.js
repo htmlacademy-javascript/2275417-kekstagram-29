@@ -16,6 +16,7 @@ const scaleValue = uploadScale.querySelector('.scale__control--value');
 const sliderContainer = uploadForm.querySelector('.img-upload__effect-level');
 const uploadSlider = uploadForm.querySelector('.effect-level__slider');
 const effects = uploadForm.querySelector('.effects__list');
+const uploadButton = uploadForm.querySelector('.img-upload__submit');
 
 
 const options = {
@@ -86,7 +87,7 @@ const sendForm = (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {
     const formData = new FormData(evt.target);
-    sendImageForm(formData, closeUpload);
+    sendImageForm(formData, closeUpload, uploadButton);
   }
 };
 

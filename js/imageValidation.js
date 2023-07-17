@@ -38,11 +38,11 @@ const validateHashtags = (value) => {
   const hashtagLowerCase = value.toLowerCase();
   const hashtagsArray = splitArray(hashtagLowerCase, ' ');
   let found = true;
-  hashtagsArray.forEach(() => {
+  for (let i = 0; i < hashtagsArray.length; i++) {
     found = hashtagsArray.every(testHashtag) &&
       checkNoRepeatedElement(hashtagsArray) &&
       hashtagsArray.length <= 5;
-  });
+  }
   return found;
 };
 
@@ -57,11 +57,11 @@ const getHashtagsError = () => {
   let errorMessageTwo = '';
   let errorMessageThree = '';
   let hashtagErrorMessage = '';
-  hashtagsArray.forEach(() => {
+  for (let i = 0; i < hashtagsArray.length; i++) {
     if (!hashtagsArray.every(testHashtag)) {
       errorMessageOne = 'введён невалидный хэш-тег\n';
     }
-  });
+  }
   if (!checkNoRepeatedElement(hashtagsArray)) {
     errorMessageTwo = 'введены повторяющиеся хеш-теги\n';
   }

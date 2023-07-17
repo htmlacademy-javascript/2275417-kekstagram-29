@@ -34,20 +34,8 @@ const openWindow = (element) => {
  * функция для проверки наличия в массиве повторяющихся элементов.
  * @returns boolean
  */
-const checkNoRepeatedElement = (array) => {
-  const previousValues = [];
-  const repeatedValues = [];
-  let value = true;
-  array.forEach((element) => {
-    if (!previousValues.includes(element)) {
-      previousValues.push(element);
-    } else {
-      repeatedValues.push(element);
-    }
-    value = repeatedValues.length === 0;
-  });
-  return value;
-};
+const checkNoRepeatedElement = (array) => array.length === new Set(array).size;
+
 /**
  * функция для превращения строки в массив. исключает пустые элементы.
  * @param {string} string - строка, которую нужно разделить на элементы массива.

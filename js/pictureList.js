@@ -1,9 +1,9 @@
 const pictureTemplate = document.querySelector('#picture').content;
 
 /**
- * функция, создающая элементы фотографий по шаблону.
+ * функция, создающая Html элементы фотографий по шаблону.
  * @param {Array} data - массив, содержащий данные для создания элементов.
- * @param {HTMLElement} element - Html элемент в который будут добавлены фотографии.
+ * @param {HTMLElement} element - родительский html элемент в который будут добавлены фотографии.
  */
 const createElements = (data, element) => {
   for (let i = 0; i < data.length; i++) {
