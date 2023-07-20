@@ -31,6 +31,27 @@ const onErrorEsc = (evt) => {
   }
 };
 
+const onSuccessClick = (element) => {
+  element.addEventListener('click', (evt) => {
+    if (evt.target.matches('.success')
+      || evt.target.closest('.success__button')) {
+      element.remove();
+      document.removeEventListener('keydown', onSuccessEsc);
+    }
+  });
+};
+
+const onErrorClick = (element) => {
+  element.addEventListener('click', (evt) => {
+    if (evt.target.matches('.error')
+      || evt.target.closest('.error__button')) {
+      element.remove();
+      document.removeEventListener('keydown', onErrorEsc);
+      document.addEventListener('keydown', onUploadEsc);
+    }
+  });
+};
+
 /**
  * функция создания окна с сообщением об успешной отправке формы.
  */
@@ -39,13 +60,7 @@ const createSuccessWindow = () => {
   document.body.append(window);
   const successWindow = document.querySelector('.success');
   document.addEventListener('keydown', onSuccessEsc);
-  successWindow.addEventListener('click', (evt) => {
-    if (evt.target.matches('.success')
-      || evt.target.closest('.success__button')) {
-      successWindow.remove();
-      document.removeEventListener('keydown', onSuccessEsc);
-    }
-  });
+  onSuccessClick(successWindow);
 };
 
 /**
@@ -60,14 +75,7 @@ const createErrorWindow = (errorMessage) => {
   document.removeEventListener('keydown', onUploadEsc);
   const errorWindow = document.querySelector('.error');
   document.addEventListener('keydown', onErrorEsc);
-  errorWindow.addEventListener('click', (evt) => {
-    if (evt.target.matches('.error')
-      || evt.target.closest('.error__button')) {
-      errorWindow.remove();
-      document.removeEventListener('keydown', onErrorEsc);
-      document.addEventListener('keydown', onUploadEsc);
-    }
-  });
+  onErrorClick(errorWindow);
 };
 
 export { createSuccessWindow, createErrorWindow };
