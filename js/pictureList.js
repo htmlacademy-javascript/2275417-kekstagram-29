@@ -1,3 +1,7 @@
+
+import { getData } from './api.js';
+import { showAlert } from './utility.js';
+
 const pictureTemplate = document.querySelector('#picture').content;
 
 const photos = [];
@@ -24,16 +28,18 @@ const createElements = (data, element) => {
   }
 };
 
-/**
- * функция, переносящая данные фотографий с сервера в массив photos.
- * @param {Array} data - массив данных.
- * @returns массив photos.
- */
-const createPhotos = (data, element) => {
-  createElements(data, element);
-  for (let i = 0; i < data.length; i++) {
-    photos.push(data[i]);
+const renderPictures = async (element) => {
+  try {
+    const data = await getData();
+    createElements(data, element);
+    if (data !== undefined) {
+      for (let i = 0; i < data.length; i++) {
+        photos.push(data[i]);
+      }
+    }
+  } catch (err) {
+    showAlert(err);
   }
 };
 
-export { createElements, createPhotos, photos };
+export { renderPictures, photos };

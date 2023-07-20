@@ -4,7 +4,7 @@ import { scaleValue, uploadImage } from './form.js';
  * функция для изменения масштаба загружаемого изображения.
  * меняет отображаемое значение  scaleValue.
  */
-const changeScale = (evt) => {
+const onScaleChange = (evt) => {
   let value = scaleValue.value.replace('%', '');
   value = Number(value);
   if (evt.target.closest('.scale__control--smaller') && value > 0) {
@@ -17,4 +17,4 @@ const changeScale = (evt) => {
   uploadImage.style.transform = `scale(${value * 0.01})`;
 };
 
-export { changeScale };
+export { onScaleChange };

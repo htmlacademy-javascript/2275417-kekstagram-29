@@ -1,9 +1,9 @@
-import { openWindow, closeWindow } from './utility.js';
+import { openWindow, closeWindow, blockSubmitButton, unblockSubmitButton } from './utility.js';
 import { pristine } from './imageValidation.js';
-import { changeScale } from './scale.js';
+import { onScaleChange } from './scale.js';
 import { createSlider, onFilterChange, setSliderUpdates } from './filters.js';
 import { createErrorWindow, createSuccessWindow } from './formMessages.js';
-import { sendImageForm, URL } from './api.js';
+import { sendData } from './api.js';
 
 const upload = document.querySelector('.img-upload');
 const uploadImage = upload.querySelector('.img-upload__preview img');
@@ -81,23 +81,32 @@ const openUpload = () => {
   onOpenReset();
 };
 
-const onSuccess = () => {
-  createSuccessWindow();
-  closeUpload();
-};
-
-const onError = (err) => {
-  createErrorWindow(err);
-};
+/**
+ * функция для отправки данных формы.
+ * @param {FormData} data - данные формы.
+ */
+const sendForm = (async (data) => {
+  blockSubmitButton(uploadButton);
+  try {
+    await sendData(data);
+    closeUpload();
+    createSuccessWindow();
+  } catch (err) {
+    createErrorWindow(err);
+  } finally {
+    unblockSubmitButton(uploadButton);
+  }
+});
 
 /**
- * функция отправки формы на сервер.
+ * функция отправки формы.
+ * предназначена для обработчика событий.
  */
-const sendForm = (evt) => {
+const onFormSubmit = (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {
     const formData = new FormData(evt.target);
-    sendImageForm(URL.Send, 'POST', formData, onSuccess, onError, uploadButton);
+    sendForm(formData);
   }
 };
 
@@ -108,15 +117,15 @@ const sendForm = (evt) => {
 const changeEvents = () => {
   if (uploadOverlay.classList.contains('hidden')) {
     uploadForm.removeEventListener('click', onOverlayClick);
-    uploadForm.removeEventListener('submit', sendForm);
-    uploadScale.removeEventListener('click', changeScale);
+    uploadForm.removeEventListener('submit', onFormSubmit);
+    uploadScale.removeEventListener('click', onScaleChange);
     effects.removeEventListener('change', onFilterChange);
     document.removeEventListener('keydown', onUploadEsc);
     return;
   }
   uploadForm.addEventListener('click', onOverlayClick);
-  uploadForm.addEventListener('submit', sendForm);
-  uploadScale.addEventListener('click', changeScale);
+  uploadForm.addEventListener('submit', onFormSubmit);
+  uploadScale.addEventListener('click', onScaleChange);
   effects.addEventListener('change', onFilterChange);
   document.addEventListener('keydown', onUploadEsc);
 };

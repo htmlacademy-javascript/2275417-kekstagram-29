@@ -1,40 +1,21 @@
-import { blockSubmitButton, unblockSubmitButton } from './utility.js';
-
 const URL = {
   Recieve: 'https://29.javascript.pages.academy/kekstagram/data',
   Send: 'https://29.javascript.pages.academy/kekstagram',
 };
 
-/**
- * функция отображения фотографий, полученных с сервера.
- * @param {HTMLElement} element - Html элемент, в котором нужно отобразить фотографии.
- */
-const getPictures = (url, method = 'GET', onSuccess, onError, element) => {
-  fetch(url, {
-    method: method,
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(`При получении данных с сервера произошла ошибка. Код ошибки: ${response.status}`);
-    })
-    .then((data) => {
-      onSuccess(data, element);
-    })
-    .catch((err) => {
-      onError(err, element);
-    });
+const ERROR_TEXT = {
+  GET: 'При получении данных с сервера произошла ошибка.',
+  POST: 'При отправке данных на сервер произошла ошибка.',
 };
 
 /**
- * функция отправки данных формы на сервер.
- * @param {FormData} data - переменная в которой записана FormData отправляемой формы.
- * @param {function} onSuccess - функция, закрывающая окно формы.
- * @param {HTMLElement} button - кнопка отправки формы.
+ * функция первичной обработки данных с сервера.
+ * @param {String} url - адресс сервера.
+ * @param {String} method - метод отправки/получения данных.
+ * @param {String} errorText - текст сообщения об ошибке.
+ * @param {FormData} formData - переменная в которой записана FormData отправляемой формы.
  */
-const sendImageForm = (url, method = 'POST', formData, onSuccess, onError, button) => {
-  blockSubmitButton(button);
+const processData = (url, method, errorText = null, formData = null) =>
   fetch(url,
     {
       method: method,
@@ -43,18 +24,18 @@ const sendImageForm = (url, method = 'POST', formData, onSuccess, onError, butto
   )
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`При отправке данных на сервер произошла ошибка. Код ошибки: ${response.status}`);
+        throw new Error();
+      }
+      if (method !== 'POST') {
+        return response.json();
       }
     })
-    .then(() => {
-      onSuccess();
-    })
-    .catch((err) => {
-      onError(err);
-    })
-    .finally(() => {
-      unblockSubmitButton(button);
+    .catch(() => {
+      throw new Error(errorText);
     });
-};
 
-export { getPictures, sendImageForm, URL };
+const getData = () => processData(URL.Recieve, 'GET', ERROR_TEXT.GET);
+
+const sendData = (formData) => processData(URL.Send, 'POST', ERROR_TEXT.POST, formData);
+
+export { getData, sendData };

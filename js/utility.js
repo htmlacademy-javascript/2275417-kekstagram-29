@@ -66,4 +66,36 @@ const unblockSubmitButton = (button) => {
   button.textContent = 'Опубликовать';
 };
 
-export { getRandomInteger, getNewId, closeWindow, openWindow, checkNoRepeatedElement, splitArray, blockSubmitButton, unblockSubmitButton };
+/**
+ * функция добавления сообщения об ошибке.
+ * @param {string} error - сообщение об ошибке
+ * @param {HTMLElement} element - Html элемент, в который нужно добавить сообщение об ошибке.
+ */
+const addError = (error, element = null) => {
+  const message = document.createElement('p');
+  message.textContent = error;
+  if (element !== null) {
+    element.append(message);
+  }
+};
+
+const showAlert = (errorMessage) => {
+  const alert = document.createElement('div');
+  alert.style.position = 'absolute';
+  alert.style.zIndex = '100';
+  alert.style.left = '0';
+  alert.style.top = '0';
+  alert.style.textAlign = 'center';
+  alert.style.padding = '10px 3px';
+  alert.style.fontSize = '30px';
+  alert.style.lineHeight = '100%';
+  alert.style.backgroundColor = '#ff4c4c';
+  alert.textContent = errorMessage;
+  document.body.append(alert);
+
+  setTimeout(() => {
+    alert.remove();
+  }, '7000');
+};
+
+export { getRandomInteger, getNewId, closeWindow, openWindow, checkNoRepeatedElement, splitArray, blockSubmitButton, unblockSubmitButton, addError, showAlert };

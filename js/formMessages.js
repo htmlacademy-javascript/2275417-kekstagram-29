@@ -1,4 +1,5 @@
 import { onUploadEsc } from './form.js';
+import { addError } from './utility.js';
 
 const successTemplate = document.querySelector('#success').content;
 const errorTemplate = document.querySelector('#error').content;
@@ -28,17 +29,6 @@ const onErrorEsc = (evt) => {
     document.removeEventListener('keydown', onErrorEsc);
     document.addEventListener('keydown', onUploadEsc);
   }
-};
-
-/**
- * функция добавления сообщения об ошибке.
- * @param {string} error - сообщение об ошибке
- * @param {HTMLElement} element - Html элемент, в который нужно добавить сообщение об ошибке.
- */
-const addError = (error, element) => {
-  const message = document.createElement('p');
-  message.textContent = error;
-  element.append(message);
 };
 
 /**
@@ -80,4 +70,4 @@ const createErrorWindow = (errorMessage) => {
   });
 };
 
-export { addError, createSuccessWindow, createErrorWindow };
+export { createSuccessWindow, createErrorWindow };
