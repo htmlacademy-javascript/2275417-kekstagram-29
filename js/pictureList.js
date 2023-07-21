@@ -1,23 +1,25 @@
-import { createPhotos } from './data.js';
-
 const pictureTemplate = document.querySelector('#picture').content;
 
-const photos = createPhotos();
-const pictureListFragment = document.createDocumentFragment();
+/**
+ * функция, создающая Html элементы фотографий по шаблону.
+ * @param {Array} data - массив, содержащий данные для создания элементов.
+ * @param {HTMLElement} element - родительский html элемент в который будут добавлены фотографии.
+ */
+const createElements = (data, element) => {
+  for (let i = 0; i < data.length; i++) {
+    const newPicture = pictureTemplate.cloneNode(true);
+    const picture = newPicture.querySelector('.picture');
+    const img = newPicture.querySelector('.picture__img');
+    const likes = newPicture.querySelector('.picture__likes');
+    const comments = newPicture.querySelector('.picture__comments');
+    img.src = data[i].url;
+    img.alt = data[i].description;
+    likes.textContent = data[i].likes;
+    comments.textContent = data[i].comments.length;
+    picture.dataset.id = data[i].id;
 
-photos.forEach((item) => {
-  const newPicture = pictureTemplate.cloneNode(true);
-  const picture = newPicture.querySelector('.picture');
-  const img = newPicture.querySelector('.picture__img');
-  const likes = newPicture.querySelector('.picture__likes');
-  const comments = newPicture.querySelector('.picture__comments');
-  img.src = item.url;
-  img.alt = item.description;
-  likes.textContent = item.likes;
-  comments.textContent = item.comments.length;
-  picture.dataset.id = item.id;
+    element.append(newPicture);
+  }
+};
 
-  pictureListFragment.append(newPicture);
-});
-
-export { photos, pictureListFragment };
+export { createElements };

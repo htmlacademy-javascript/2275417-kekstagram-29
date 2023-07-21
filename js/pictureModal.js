@@ -1,5 +1,4 @@
-import { photos } from './pictureList.js';
-import { closeWindow, openWindow } from './utility.js';
+import { closeWindow, openWindow, changeEvents, observeClassChange } from './utility.js';
 
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImage = bigPicture.querySelector('.big-picture__img img');
@@ -78,19 +77,6 @@ const openPhoto = (item) => {
   fillComments(item);
 };
 
-const onPictureClick = (evt) => {
-  const target = evt.target.closest('.picture');
-  if (target) {
-    evt.preventDefault();
-    const id = Number(target.dataset.id);
-    photos.forEach((element, index) => {
-      if (id === element.id) {
-        openPhoto(photos[index]);
-      }
-    });
-  }
-};
-
 const onOverlayClick = (evt) => {
   if (!evt.target.closest('.big-picture__preview')
     || evt.target.closest('.big-picture__cancel')) {
@@ -98,27 +84,23 @@ const onOverlayClick = (evt) => {
   }
 };
 
-const changeEvents = () => {
-  if (bigPicture.classList.contains('hidden')) {
-    document.removeEventListener('keydown', onPictureEsc);
-    bigPicture.removeEventListener('click', onOverlayClick);
-    bigPictureCommentsLoader.removeEventListener('click', loadComments);
-  } else {
-    document.addEventListener('keydown', onPictureEsc);
-    bigPicture.addEventListener('click', onOverlayClick);
-    bigPictureCommentsLoader.addEventListener('click', loadComments);
-  }
+const onPictureCloseEvents = () => {
+  document.removeEventListener('keydown', onPictureEsc);
+  bigPicture.removeEventListener('click', onOverlayClick);
+  bigPictureCommentsLoader.removeEventListener('click', loadComments);
 };
 
-const observeClassChange = (mutationList) => {
-  mutationList.forEach((mutation) => {
-    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-      changeEvents();
-    }
-  });
+const onPictureOpenEvents = () => {
+  document.addEventListener('keydown', onPictureEsc);
+  bigPicture.addEventListener('click', onOverlayClick);
+  bigPictureCommentsLoader.addEventListener('click', loadComments);
 };
 
-const observer = new MutationObserver(observeClassChange);
+const changePictureEvents = () => changeEvents(bigPicture, onPictureCloseEvents, onPictureOpenEvents);
+
+const observePictureChange = (mutationList) => observeClassChange(mutationList, changePictureEvents);
+
+const observer = new MutationObserver(observePictureChange);
 observer.observe(bigPicture, options);
 
-export { onPictureClick };
+export { openPhoto };

@@ -1,7 +1,9 @@
-import { openWindow, closeWindow } from './utility.js';
-import { pristine, validatePristine } from './imageValidation.js';
-import { changeScale } from './scale.js';
+import { openWindow, closeWindow, blockSubmitButton, unblockSubmitButton, changeEvents, observeClassChange } from './utility.js';
+import { pristine } from './imageValidation.js';
+import { onScaleChange } from './scale.js';
 import { createSlider, onFilterChange, setSliderUpdates } from './filters.js';
+import { createErrorWindow, createSuccessWindow } from './formMessages.js';
+import { sendData } from './api.js';
 
 const upload = document.querySelector('.img-upload');
 const uploadImage = upload.querySelector('.img-upload__preview img');
@@ -15,6 +17,7 @@ const scaleValue = uploadScale.querySelector('.scale__control--value');
 const sliderContainer = uploadForm.querySelector('.img-upload__effect-level');
 const uploadSlider = uploadForm.querySelector('.effect-level__slider');
 const effects = uploadForm.querySelector('.effects__list');
+const uploadButton = uploadForm.querySelector('.img-upload__submit');
 
 
 const options = {
@@ -78,38 +81,59 @@ const openUpload = () => {
   onOpenReset();
 };
 
+/**
+ * функция для отправки данных формы.
+ * @param {FormData} data - данные формы.
+ */
+const sendForm = (async (data) => {
+  blockSubmitButton(uploadButton);
+  try {
+    await sendData(data);
+    closeUpload();
+    createSuccessWindow();
+  } catch (err) {
+    createErrorWindow(err.message);
+  } finally {
+    unblockSubmitButton(uploadButton);
+  }
+});
 
 /**
- * функция, меняющая обработчики событий в зависимости от класса hidden окна редактирования загружаемого изображения.
+ * функция отправки формы.
+ * предназначена для обработчика событий.
  */
-const changeEvents = () => {
-  if (uploadOverlay.classList.contains('hidden')) {
-    uploadForm.removeEventListener('click', onOverlayClick);
-    uploadForm.removeEventListener('submit', validatePristine);
-    uploadScale.removeEventListener('click', changeScale);
-    effects.removeEventListener('change', onFilterChange);
-    document.removeEventListener('keydown', onUploadEsc);
-    return;
+const onFormSubmit = (evt) => {
+  evt.preventDefault();
+  if (pristine.validate()) {
+    const formData = new FormData(evt.target);
+    sendForm(formData);
   }
+};
+
+const onFormCloseEvents = () => {
+  uploadForm.removeEventListener('click', onOverlayClick);
+  uploadForm.removeEventListener('submit', onFormSubmit);
+  uploadScale.removeEventListener('click', onScaleChange);
+  effects.removeEventListener('change', onFilterChange);
+  document.removeEventListener('keydown', onUploadEsc);
+};
+
+const onFormOpenEvents = () => {
   uploadForm.addEventListener('click', onOverlayClick);
-  uploadForm.addEventListener('submit', validatePristine);
-  uploadScale.addEventListener('click', changeScale);
+  uploadForm.addEventListener('submit', onFormSubmit);
+  uploadScale.addEventListener('click', onScaleChange);
   effects.addEventListener('change', onFilterChange);
   document.addEventListener('keydown', onUploadEsc);
 };
 
 /**
- * функция для настройки mutationObserver на смену классов
+ * функция, меняющая обработчики событий в зависимости от класса hidden окна редактирования загружаемого изображения.
  */
-const observeClassChange = (mutationList) => {
-  mutationList.forEach((mutation) => {
-    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-      changeEvents();
-    }
-  });
-};
+const changeFormEvents = () => changeEvents(uploadOverlay, onFormCloseEvents, onFormOpenEvents);
 
-const observer = new MutationObserver(observeClassChange);
+const observeFormChange = (mutationList) => observeClassChange(mutationList, changeFormEvents);
+
+const observer = new MutationObserver(observeFormChange);
 observer.observe(uploadOverlay, options);
 
-export { openUpload, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };
+export { openUpload, closeUpload, onUploadEsc, uploadForm, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };
