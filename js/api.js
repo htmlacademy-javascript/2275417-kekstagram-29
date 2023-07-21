@@ -15,12 +15,9 @@ const ERROR_TEXT = {
  * @param {String} errorText - текст сообщения об ошибке.
  * @param {FormData} formData - переменная в которой записана FormData отправляемой формы.
  */
-const processData = (url, method, errorText = null, formData = null) =>
+const processData = (url, method, errorText = null, body = null) =>
   fetch(url,
-    {
-      method: method,
-      body: formData,
-    },
+    { method, body },
   )
     .then((response) => {
       if (!response.ok) {
@@ -36,6 +33,6 @@ const processData = (url, method, errorText = null, formData = null) =>
 
 const getData = () => processData(URL.Recieve, 'GET', ERROR_TEXT.GET);
 
-const sendData = (formData) => processData(URL.Send, 'POST', ERROR_TEXT.POST, formData);
+const sendData = (body) => processData(URL.Send, 'POST', ERROR_TEXT.POST, body);
 
 export { getData, sendData };

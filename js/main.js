@@ -1,12 +1,9 @@
-import { renderPictures } from './pictureList.js';
-import { onPictureClick } from './pictureFullSize.js';
 import { openUpload } from './form.js';
+import { renderGallery } from './gallery.js';
 
 const pictureList = document.querySelector('.pictures');
 const uploadInput = document.querySelector('.img-upload__input');
 
-renderPictures(pictureList);
-
-pictureList.addEventListener('click', onPictureClick);
+renderGallery(pictureList);
 
 uploadInput.addEventListener('change', openUpload);

@@ -1,10 +1,4 @@
-
-import { getData } from './api.js';
-import { showAlert } from './utility.js';
-
 const pictureTemplate = document.querySelector('#picture').content;
-
-const photos = [];
 
 /**
  * функция, создающая Html элементы фотографий по шаблону.
@@ -28,18 +22,4 @@ const createElements = (data, element) => {
   }
 };
 
-const renderPictures = async (element) => {
-  try {
-    const data = await getData();
-    createElements(data, element);
-    if (data !== undefined) {
-      for (let i = 0; i < data.length; i++) {
-        photos.push(data[i]);
-      }
-    }
-  } catch (err) {
-    showAlert(err);
-  }
-};
-
-export { renderPictures, photos };
+export { createElements };

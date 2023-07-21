@@ -1,4 +1,4 @@
-import { openWindow, closeWindow, blockSubmitButton, unblockSubmitButton } from './utility.js';
+import { openWindow, closeWindow, blockSubmitButton, unblockSubmitButton, changeEvents, observeClassChange } from './utility.js';
 import { pristine } from './imageValidation.js';
 import { onScaleChange } from './scale.js';
 import { createSlider, onFilterChange, setSliderUpdates } from './filters.js';
@@ -92,7 +92,7 @@ const sendForm = (async (data) => {
     closeUpload();
     createSuccessWindow();
   } catch (err) {
-    createErrorWindow(err);
+    createErrorWindow(err.message);
   } finally {
     unblockSubmitButton(uploadButton);
   }
@@ -110,19 +110,15 @@ const onFormSubmit = (evt) => {
   }
 };
 
+const onFormCloseEvents = () => {
+  uploadForm.removeEventListener('click', onOverlayClick);
+  uploadForm.removeEventListener('submit', onFormSubmit);
+  uploadScale.removeEventListener('click', onScaleChange);
+  effects.removeEventListener('change', onFilterChange);
+  document.removeEventListener('keydown', onUploadEsc);
+};
 
-/**
- * функция, меняющая обработчики событий в зависимости от класса hidden окна редактирования загружаемого изображения.
- */
-const changeEvents = () => {
-  if (uploadOverlay.classList.contains('hidden')) {
-    uploadForm.removeEventListener('click', onOverlayClick);
-    uploadForm.removeEventListener('submit', onFormSubmit);
-    uploadScale.removeEventListener('click', onScaleChange);
-    effects.removeEventListener('change', onFilterChange);
-    document.removeEventListener('keydown', onUploadEsc);
-    return;
-  }
+const onFormOpenEvents = () => {
   uploadForm.addEventListener('click', onOverlayClick);
   uploadForm.addEventListener('submit', onFormSubmit);
   uploadScale.addEventListener('click', onScaleChange);
@@ -131,17 +127,13 @@ const changeEvents = () => {
 };
 
 /**
- * функция для настройки mutationObserver на смену классов
+ * функция, меняющая обработчики событий в зависимости от класса hidden окна редактирования загружаемого изображения.
  */
-const observeClassChange = (mutationList) => {
-  mutationList.forEach((mutation) => {
-    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-      changeEvents();
-    }
-  });
-};
+const changeFormEvents = () => changeEvents(uploadOverlay, onFormCloseEvents, onFormOpenEvents);
 
-const observer = new MutationObserver(observeClassChange);
+const observeFormChange = (mutationList) => observeClassChange(mutationList, changeFormEvents);
+
+const observer = new MutationObserver(observeFormChange);
 observer.observe(uploadOverlay, options);
 
 export { openUpload, closeUpload, onUploadEsc, uploadForm, scaleValue, uploadImage, sliderContainer, uploadSlider, effects };

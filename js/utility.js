@@ -95,7 +95,26 @@ const showAlert = (errorMessage) => {
 
   setTimeout(() => {
     alert.remove();
-  }, '7000');
+  }, '5000');
 };
 
-export { getRandomInteger, getNewId, closeWindow, openWindow, checkNoRepeatedElement, splitArray, blockSubmitButton, unblockSubmitButton, addError, showAlert };
+const changeEvents = (element, onCloseEvents, onOpenEvents) => {
+  if (element.classList.contains('hidden')) {
+    onCloseEvents();
+    return;
+  }
+  onOpenEvents();
+};
+
+/**
+ * функция для настройки mutationObserver на смену классов
+ */
+const observeClassChange = (mutationList, inputFunction) => {
+  mutationList.forEach((mutation) => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      inputFunction();
+    }
+  });
+};
+
+export { getRandomInteger, getNewId, closeWindow, openWindow, checkNoRepeatedElement, splitArray, blockSubmitButton, unblockSubmitButton, addError, showAlert, changeEvents, observeClassChange };

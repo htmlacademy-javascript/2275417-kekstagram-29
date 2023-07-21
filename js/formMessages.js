@@ -8,27 +8,24 @@ const errorTemplate = document.querySelector('#error').content;
  * функция, закрывающая окно с сообщением об успешной отправке формы по нажатию Esc.
  * предназначена для обработчика событий.
  */
-const onSuccessEsc = (evt) => {
-  const successWindow = document.querySelector('.success');
+const onWindowEsc = (evt, selector, eventFunction) => {
+  const window = document.querySelector(selector);
   if (evt.key === 'Escape') {
     evt.preventDefault();
-    successWindow.remove();
-    document.removeEventListener('keydown', onSuccessEsc);
+    window.remove();
+    document.removeEventListener('keydown', eventFunction);
   }
 };
+
+const onSuccessEsc = (evt) => onWindowEsc(evt, '.success', onSuccessEsc);
 
 /**
  * функция, закрывающая окно с сообщением об ошибке отправки формы по нажатию Esc.
  * предназначена для обработчика событий.
  */
 const onErrorEsc = (evt) => {
-  const errorWindow = document.querySelector('.error');
-  if (evt.key === 'Escape') {
-    evt.preventDefault();
-    errorWindow.remove();
-    document.removeEventListener('keydown', onErrorEsc);
-    document.addEventListener('keydown', onUploadEsc);
-  }
+  onWindowEsc(evt, '.error', onErrorEsc);
+  document.addEventListener('keydown', onUploadEsc);
 };
 
 const onSuccessClick = (element) => {
