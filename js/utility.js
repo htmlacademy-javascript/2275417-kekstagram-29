@@ -1,18 +1,3 @@
-function getRandomInteger(a, b) {
-  return Math.floor(Math.random() * (b - a + 1) + a);
-}
-
-function getNewId(max) {
-  let lastGeneratedId = 0;
-  return function () {
-    lastGeneratedId += 1;
-    if (lastGeneratedId > max) {
-      return null;
-    }
-    return lastGeneratedId;
-  };
-}
-
 /**
  * функция закрытия модальных окон. убирает класс modal-open у body,
  * ставит класс hidden на заданный элемент.
@@ -117,4 +102,16 @@ const observeClassChange = (mutationList, inputFunction) => {
   });
 };
 
-export { getRandomInteger, getNewId, closeWindow, openWindow, checkNoRepeatedElement, splitArray, blockSubmitButton, unblockSubmitButton, addError, showAlert, changeEvents, observeClassChange };
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+const removeElements = (element) => {
+  element.forEach((item) => item.remove());
+};
+
+export { closeWindow, openWindow, checkNoRepeatedElement, splitArray, blockSubmitButton, unblockSubmitButton, addError, showAlert, changeEvents, observeClassChange, debounce, removeElements };

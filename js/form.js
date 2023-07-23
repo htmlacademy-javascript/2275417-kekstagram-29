@@ -1,8 +1,8 @@
 import { openWindow, closeWindow, blockSubmitButton, unblockSubmitButton, changeEvents, observeClassChange } from './utility.js';
-import { pristine } from './imageValidation.js';
+import { pristine } from './image-validation.js';
 import { onScaleChange } from './scale.js';
-import { createSlider, onFilterChange, setSliderUpdates } from './filters.js';
-import { createErrorWindow, createSuccessWindow } from './formMessages.js';
+import { createSlider, onFilterChange, setSliderUpdates } from './effects.js';
+import { createErrorWindow, createSuccessWindow } from './form-messages.js';
 import { sendData } from './api.js';
 
 const upload = document.querySelector('.img-upload');
