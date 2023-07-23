@@ -1,122 +1,59 @@
-import { sliderContainer, uploadSlider, uploadImage } from './form.js';
+import { removeElements } from './utility.js';
 
-const effectLevel = document.querySelector('.effect-level__value');
-
-const filterOptions = {
-  'none': {
-    min: 0,
-    max: 100,
-    step: 1,
-  },
-  'chrome': {
-    style: 'grayscale',
-    unit: '',
-    min: 0,
-    max: 1,
-    step: 0.1,
-  },
-  'sepia': {
-    style: 'sepia',
-    unit: '',
-    min: 0,
-    max: 1,
-    step: 0.1,
-  },
-  'marvin': {
-    style: 'invert',
-    unit: '%',
-    min: 0,
-    max: 100,
-    step: 1,
-  },
-  'phobos': {
-    style: 'blur',
-    unit: 'px',
-    min: 0,
-    max: 3,
-    step: 0.1,
-  },
-  'heat': {
-    style: 'brightness',
-    unit: '',
-    min: 1,
-    max: 3,
-    step: 0.1,
-  },
+const PICTURES_COUNT = 10;
+const Filter = {
+  DEFAULT: 'filter-default',
+  RANDOM: 'filter-random',
+  DISCUSSED: 'filter-discussed',
 };
 
-let activeFilter = 'none';
+const filters = document.querySelector('.img-filters');
 
-/**
- * функция, создающая noUiSlider на заданном элементе
- */
-const createSlider = (element) => {
-  noUiSlider.create(element, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 100,
-    connect: 'lower',
-    format: {
-      to: function (value) {
-        if (Number.isInteger(value)) {
-          return value.toFixed(0);
-        }
-        return value.toFixed(1);
-      },
-      from: function (value) {
-        return parseFloat(value);
-      }
-    }
-  });
-};
+let activeFilter = Filter.DEFAULT;
 
-/**
- * функция с логикой обновления настроек слайдера.
- * настройки стоит брать из словаря filterOptions.
- */
-const updateSlider = ({ min, max, step }) => {
-  uploadSlider.noUiSlider.updateOptions({
-    range: { min, max },
-    step,
-    start: max,
-  });
-};
+const sortRandomly = () => Math.random() - 0.5;
 
-/**
- * функция меняющая настройки слайдера в зависимости от выбранного фильтра.
- * меняет значение переменной activeFilter в соответствии с выбранной радиокнопкой.
- * предназначена для обработчика событий на списке радиокнопок.
- */
-const onFilterChange = (evt) => {
-  if (evt.target.value === 'none') {
-    sliderContainer.classList.add('hidden');
-    activeFilter = evt.target.value;
-    updateSlider(filterOptions[activeFilter]);
-    return;
+const sortByComments = (itemA, itemB) => itemB.comments.length - itemA.comments.length;
+
+const sortPictures = (data, inputFunction, element) => {
+  const pictures = [...data];
+  if (activeFilter === Filter.RANDOM) {
+    removeElements(element.querySelectorAll('.picture'));
+    const dataSlice = pictures.sort(sortRandomly).slice(0, PICTURES_COUNT);
+    inputFunction(dataSlice, element);
   }
-  sliderContainer.classList.remove('hidden');
-  activeFilter = evt.target.value;
-  updateSlider(filterOptions[activeFilter]);
+  if (activeFilter === Filter.DISCUSSED) {
+    removeElements(element.querySelectorAll('.picture'));
+    pictures.sort(sortByComments);
+    inputFunction(pictures, element);
+  }
+  if (activeFilter === Filter.DEFAULT) {
+    removeElements(element.querySelectorAll('.picture'));
+    return inputFunction(data, element);
+  }
 };
 
-/**
- * обработчик изменений слайдера.
- * записывает отформатированные значения слайдера в style.filter загружаемого изображения.
- * формат зависит от значения переменной activeFilter.
- */
-const setSliderUpdates = () => {
-  uploadSlider.noUiSlider.on('update', () => {
-    if (activeFilter === 'none') {
-      uploadImage.style.filter = null;
+const onFilterClick = (data, inputFunction, element) => {
+  filters.addEventListener('click', (evt) => {
+    if (!evt.target.classList.contains('img-filters__button')) {
       return;
     }
-    const { style, unit } = filterOptions[activeFilter];
-    const value = uploadSlider.noUiSlider.get();
-    effectLevel.value = value;
-    uploadImage.style.filter = `${style}(${value}${unit})`;
+    const target = evt.target;
+    if (target.id === activeFilter) {
+      return;
+    }
+    filters
+      .querySelector('.img-filters__button--active')
+      .classList.remove('img-filters__button--active');
+    target.classList.add('img-filters__button--active');
+    activeFilter = target.id;
+    sortPictures(data, inputFunction, element);
   });
 };
 
-export { createSlider, onFilterChange, setSliderUpdates };
+const setFilters = (data, inputFunction, element) => {
+  filters.classList.remove('img-filters--inactive');
+  onFilterClick(data, inputFunction, element);
+};
+
+export { setFilters };

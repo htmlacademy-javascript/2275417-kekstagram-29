@@ -1,7 +1,8 @@
-import { openPhoto } from './pictureModal.js';
-import { createElements } from './pictureList.js';
-import { showAlert } from './utility.js';
+import { openPhoto } from './picture-modal.js';
+import { createElements } from './picture-list.js';
+import { showAlert, debounce } from './utility.js';
 import { getData } from './api.js';
+import { setFilters } from './filters.js';
 
 const renderPhoto = (evt, pictures) => {
   const element = evt.target.closest('.picture');
@@ -23,6 +24,7 @@ const renderGallery = async (element) => {
   try {
     const data = await getData();
     createGallery(data, element);
+    setFilters(data, debounce(createElements), element);
   } catch (err) {
     showAlert(err.message);
   }

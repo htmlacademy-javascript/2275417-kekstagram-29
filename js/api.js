@@ -1,9 +1,9 @@
-const URL = {
-  Recieve: 'https://29.javascript.pages.academy/kekstagram/data',
-  Send: 'https://29.javascript.pages.academy/kekstagram',
+const Url = {
+  RECIEVE: 'https://29.javascript.pages.academy/kekstagram/data',
+  SEND: 'https://29.javascript.pages.academy/kekstagram',
 };
 
-const ERROR_TEXT = {
+const ErrorText = {
   GET: 'При получении данных с сервера произошла ошибка.',
   POST: 'При отправке данных на сервер произошла ошибка.',
 };
@@ -31,8 +31,8 @@ const processData = (url, method, errorText = null, body = null) =>
       throw new Error(errorText);
     });
 
-const getData = () => processData(URL.Recieve, 'GET', ERROR_TEXT.GET);
+const getData = () => processData(Url.RECIEVE, 'GET', ErrorText.GET);
 
-const sendData = (body) => processData(URL.Send, 'POST', ERROR_TEXT.POST, body);
+const sendData = (body) => processData(Url.SEND, 'POST', ErrorText.POST, body);
 
 export { getData, sendData };
