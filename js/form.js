@@ -17,6 +17,7 @@ const scaleValue = uploadScale.querySelector('.scale__control--value');
 const sliderContainer = uploadForm.querySelector('.img-upload__effect-level');
 const uploadSlider = uploadForm.querySelector('.effect-level__slider');
 const effects = uploadForm.querySelector('.effects__list');
+const effectsPreview = effects.querySelectorAll('.effects__preview');
 const uploadButton = uploadForm.querySelector('.img-upload__submit');
 
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
@@ -63,12 +64,19 @@ const onOverlayClick = (evt) => {
   }
 };
 
+/**
+ * функция, подставляющая загружаемое изображения в превью.
+ */
 const setPreviewImage = () => {
   const file = uploadInput.files[0];
   const fileName = file.name.toLowerCase();
   const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
   if (matches) {
-    uploadImage.src = URL.createObjectURL(file);
+    const newFile = URL.createObjectURL(file);
+    uploadImage.src = newFile;
+    effectsPreview.forEach((item) => {
+      item.style.backgroundImage = `URL(${newFile})`;
+    });
   }
 };
 
@@ -78,8 +86,8 @@ const setPreviewImage = () => {
  */
 const openUpload = () => {
   uploadImage.src = '';
-  openWindow(uploadOverlay);
   setPreviewImage();
+  openWindow(uploadOverlay);
   createSlider(uploadSlider);
   setSliderUpdates();
   sliderContainer.classList.add('hidden');
@@ -115,6 +123,9 @@ const onFormSubmit = (evt) => {
   }
 };
 
+/**
+ * функция устанавливающая обработчики событий для закрытого окна формы.
+ */
 const onFormCloseEvents = () => {
   uploadForm.removeEventListener('click', onOverlayClick);
   uploadForm.removeEventListener('submit', onFormSubmit);
@@ -123,6 +134,9 @@ const onFormCloseEvents = () => {
   document.removeEventListener('keydown', onUploadEsc);
 };
 
+/**
+ * функция устанавливающая обработчики событий для открытого окна формы.
+ */
 const onFormOpenEvents = () => {
   uploadForm.addEventListener('click', onOverlayClick);
   uploadForm.addEventListener('submit', onFormSubmit);

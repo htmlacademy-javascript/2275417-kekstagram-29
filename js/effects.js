@@ -60,10 +60,7 @@ const createSlider = (element) => {
     connect: 'lower',
     format: {
       to: function (value) {
-        if (Number.isInteger(value)) {
-          return value.toFixed(0);
-        }
-        return value.toFixed(1);
+        return value.toFixed(2);
       },
       from: function (value) {
         return parseFloat(value);

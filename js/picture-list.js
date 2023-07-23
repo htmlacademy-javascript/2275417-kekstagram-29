@@ -1,3 +1,5 @@
+import { removeElements } from './utility.js';
+
 const pictureTemplate = document.querySelector('#picture').content;
 
 /**
@@ -6,6 +8,7 @@ const pictureTemplate = document.querySelector('#picture').content;
  * @param {HTMLElement} element - родительский html элемент в который будут добавлены фотографии.
  */
 const createElements = (data, element) => {
+  removeElements(element.querySelectorAll('.picture'));
   for (let i = 0; i < data.length; i++) {
     const newPicture = pictureTemplate.cloneNode(true);
     const picture = newPicture.querySelector('.picture');
