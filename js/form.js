@@ -19,6 +19,7 @@ const uploadSlider = uploadForm.querySelector('.effect-level__slider');
 const effects = uploadForm.querySelector('.effects__list');
 const uploadButton = uploadForm.querySelector('.img-upload__submit');
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const options = {
   attributes: true
@@ -30,10 +31,11 @@ const options = {
  */
 const closeUpload = () => {
   closeWindow(uploadOverlay);
-  uploadInput.value = '';
   uploadSlider.noUiSlider.destroy();
   uploadForm.reset();
   pristine.reset();
+  uploadInput.value = '';
+  uploadImage.style.transform = '';
 };
 
 /**
@@ -61,13 +63,13 @@ const onOverlayClick = (evt) => {
   }
 };
 
-/**
- * функция, сбрасывающая значения дополнительных элементов формы.
- */
-const onOpenReset = () => {
-  uploadImage.style.transform = '';
-  sliderContainer.classList.add('hidden');
-  uploadImage.style.filter = null;
+const setPreviewImage = () => {
+  const file = uploadInput.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  if (matches) {
+    uploadImage.src = URL.createObjectURL(file);
+  }
 };
 
 /**
@@ -75,10 +77,13 @@ const onOpenReset = () => {
  * обнуляет введенные значения, восстанавливает стандартные значения масштаба и фильтров, добавляет noUiSlider.
  */
 const openUpload = () => {
+  uploadImage.src = '';
   openWindow(uploadOverlay);
+  setPreviewImage();
   createSlider(uploadSlider);
   setSliderUpdates();
-  onOpenReset();
+  sliderContainer.classList.add('hidden');
+  uploadImage.style.filter = null;
 };
 
 /**
