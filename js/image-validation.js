@@ -10,18 +10,10 @@ const textHashtags = uploadForm.querySelector('.text__hashtags');
  */
 const hashtagRegular = /^#[a-zа-яё0-9]{1,19}$/i;
 
-/**
- * максимальная длина комментария.
- */
-const MAX_TEXT_LENGTH = 140;
-
-textDescripton.setAttribute('maxLength', MAX_TEXT_LENGTH);
-
 const pristine = new Pristine(uploadForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'img-upload__error-text',
-  errorTextTag: 'p'
+  errorTextClass: 'img-upload__error',
 });
 
 /**
@@ -35,9 +27,9 @@ const testHashtag = (currentValue) => hashtagRegular.test(currentValue.toString(
  * @returns boolean.
  */
 const validateHashtags = (value) => {
+  let found = true;
   const hashtagLowerCase = value.toLowerCase();
   const hashtagsArray = splitArray(hashtagLowerCase, ' ');
-  let found = true;
   for (let i = 0; i < hashtagsArray.length; i++) {
     found = hashtagsArray.every(testHashtag) &&
       checkNoRepeatedElement(hashtagsArray) &&
@@ -71,6 +63,10 @@ const getHashtagsError = () => {
   hashtagErrorMessage = errorMessageOne + errorMessageTwo + errorMessageThree;
   return hashtagErrorMessage;
 };
+
+const validateComment = () => textDescripton.value.length <= 140;
+
+pristine.addValidator(textDescripton, validateComment, 'Не более 140 символов');
 
 pristine.addValidator(textHashtags, validateHashtags, getHashtagsError);
 

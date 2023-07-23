@@ -13,7 +13,7 @@ const ErrorText = {
  * @param {String} url - адресс сервера.
  * @param {String} method - метод отправки/получения данных.
  * @param {String} errorText - текст сообщения об ошибке.
- * @param {FormData} formData - переменная в которой записана FormData отправляемой формы.
+ * @param {FormData} body - переменная в которой записана FormData отправляемой формы.
  */
 const processData = (url, method, errorText = null, body = null) =>
   fetch(url,
@@ -31,8 +31,15 @@ const processData = (url, method, errorText = null, body = null) =>
       throw new Error(errorText);
     });
 
+/**
+ * функция получения данных с сервера.
+ */
 const getData = () => processData(Url.RECIEVE, 'GET', ErrorText.GET);
 
+/**
+ * функция отправки данных на сервер.
+ * @param {FormData} body - данные формы.
+ */
 const sendData = (body) => processData(Url.SEND, 'POST', ErrorText.POST, body);
 
 export { getData, sendData };

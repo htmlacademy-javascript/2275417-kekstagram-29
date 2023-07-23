@@ -4,6 +4,10 @@ import { showAlert, debounce } from './utility.js';
 import { getData } from './api.js';
 import { setFilters } from './filters.js';
 
+/**
+ * функция отображения крупного изображения при нажатии на миниатюру.
+ * @param {Array} pictures - массив с данными для фотографии.
+ */
 const renderPhoto = (evt, pictures) => {
   const element = evt.target.closest('.picture');
   if (!element) {
@@ -13,6 +17,11 @@ const renderPhoto = (evt, pictures) => {
   openPhoto(picture);
 };
 
+/**
+ * функция создания миниатюр.
+ * @param {Array} data - массив с данными фотографий.
+ * @param {HTMLElement} element - html элемент, в который будут добавлены миниатюры.
+ */
 const createGallery = (data, element) => {
   createElements(data, element);
   element.addEventListener('click', (evt) => {
@@ -20,11 +29,15 @@ const createGallery = (data, element) => {
   });
 };
 
+/**
+ * функция отображения миниатюр на странице.
+ * @param {HTMLElement} element - html элемент, в который будут добавлены миниатюры.
+ */
 const renderGallery = async (element) => {
   try {
     const data = await getData();
     createGallery(data, element);
-    setFilters(data, debounce(createElements), element);
+    setFilters(data, debounce(createElements, 500), element);
   } catch (err) {
     showAlert(err.message);
   }

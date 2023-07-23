@@ -64,6 +64,10 @@ const addError = (error, element = null) => {
   }
 };
 
+/**
+ * Функция отображения сообщения об ошибке.
+ * @param {String} errorMessage - текст сообщения об ошибке.
+ */
 const showAlert = (errorMessage) => {
   const alert = document.createElement('div');
   alert.style.position = 'absolute';
@@ -83,6 +87,12 @@ const showAlert = (errorMessage) => {
   }, '5000');
 };
 
+/**
+ * функция смены обработчиков событий.
+ * @param {HTMLElement} element - html элемент, от наличия класса hidden которого зависят устанавливаемые обработчики.
+ * @param {Function} onCloseEvents - функция, устанавливающая обработчики событий при закрытом модальном окне.
+ * @param {Function} onOpenEvents - функция, устанавливающая обработчики событий при открытом модальном окне.
+ */
 const changeEvents = (element, onCloseEvents, onOpenEvents) => {
   if (element.classList.contains('hidden')) {
     onCloseEvents();
@@ -110,8 +120,12 @@ const debounce = (callback, timeoutDelay = 500) => {
   };
 };
 
-const removeElements = (element) => {
-  element.forEach((item) => item.remove());
+/**
+ * функция, удаляющая группу html элементов.
+ * @param {array} elements - массив html элементов.
+ */
+const removeElements = (elements) => {
+  elements.forEach((item) => item.remove());
 };
 
 export { closeWindow, openWindow, checkNoRepeatedElement, splitArray, blockSubmitButton, unblockSubmitButton, addError, showAlert, changeEvents, observeClassChange, debounce, removeElements };
